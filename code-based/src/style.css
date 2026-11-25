@@ -36,7 +36,8 @@ body {
 
 label { display: block; font-weight: 600; margin-bottom: 12px; }
 
-input[type="time"] {
+input[type="time"],
+input[type="number"] {
   display: block;
   width: 100%;
   margin-top: 4px;
@@ -71,6 +72,8 @@ button:hover { background: #1c46ad; }
 
 .result.ok { background: #e6f6ec; color: #17643a; border: 1px solid #9fd8b4; }
 .result.error { background: #fdecec; color: #9b1c1c; border: 1px solid #f1a9a9; }
+.result.warn { background: #fff7e0; color: #7a4b00; border: 1px solid #f0cf7a; }
+.result-code { display: block; margin-top: 4px; font-size: 0.85rem; font-weight: 400; opacity: 0.85; }
 
 #explain-section { margin-top: 16px; }
 

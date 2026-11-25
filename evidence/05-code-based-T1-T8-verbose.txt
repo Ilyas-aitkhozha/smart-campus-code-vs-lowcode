@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 <code-based>
+
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T1 valid free interval 12:00 + 60 -> Available 2ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T2 overlap 10:30 + 60 with B1 10:00–11:00 -> Unavailable 0ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T3 blocked room 12:00 + 60 -> Unavailable 0ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T4 duration = 0 -> validation error 0ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T5 duration = 121 -> validation error 0ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T6 past start time 08:00 + 30 -> validation error 0ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T7 adjacent 11:00 + 60 (touches B1 end) -> Available 0ms
+ ✓ tests/contract-t1-t8.test.js > Shared contract T1–T8 > T8 booking data unchanged after running T1–T7 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > duration = 120 is allowed 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > start exactly at "now" (09:00) is not in the future 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > slot ending exactly when B2 starts (13:00 + 60) is Available 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > empty start time -> INVALID_START_TIME 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > non-numeric / fractional duration -> INVALID_DURATION 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > script-like text in start time is rejected as invalid, never echoed 0ms
+ ✓ tests/contract-t1-t8.test.js > Boundary and invalid-input checks (extra) > duration typed as a string ("60") is accepted like a number 0ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  19:15:00
+   Duration  383ms (transform 31ms, setup 0ms, collect 42ms, tests 4ms, environment 0ms, prepare 124ms)
+

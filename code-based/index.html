@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Campus — Room availability</title>
+    <title>Smart Campus — Room availability (code-based)</title>
     <link rel="stylesheet" href="/src/style.css" />
     <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -30,8 +30,8 @@
             <label>Start time
               <input id="start" type="time" step="300" required />
             </label>
-            <label>End time
-              <input id="end" type="time" step="300" required />
+            <label>Duration (minutes)
+              <input id="duration" type="number" inputmode="numeric" min="1" max="120" step="1" value="60" required />
             </label>
           </div>
           <label class="checkbox">

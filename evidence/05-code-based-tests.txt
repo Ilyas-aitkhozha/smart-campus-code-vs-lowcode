@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 <code-based>
+
+ ✓ tests/invalid-input.test.js (5 tests) 3ms
+ ✓ tests/availability.test.js (10 tests) 3ms
+ ✓ tests/regression.test.js (15 tests) 4ms
+ ✓ tests/contract-t1-t8.test.js (15 tests) 6ms
+ ✓ tests/explain.test.js (28 tests) 58ms
+
+ Test Files  5 passed (5)
+      Tests  73 passed (73)
+   Start at  19:14:57
+   Duration  569ms (transform 109ms, setup 0ms, collect 267ms, tests 74ms, environment 1ms, prepare 731ms)
+

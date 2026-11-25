@@ -7,6 +7,10 @@ User story: As a student, I want to check a room's availability so I can choose 
 
 ## Structure
 - `src/availability.js` — pure booking rule `checkAvailability(request, room, bookings, now)` (authoritative; not edited by the explain feature)
+- `src/validation.js` — Practice #13 input validation (HH:MM start, duration 1–120, start in the future)
+- `src/slotChecker.js` — Practice #13 shared-contract entry `checkSlot()` → `{ available, reasonCode, message, kind }`
+- `src/messages.js` — visible message per reason code
+- `tests/contract-t1-t8.test.js` — Practice #13 shared tests T1–T8 + boundary checks
 - `src/fixtures.js` — shared demo data: room, fixed time, fictional bookings (used by UI and tests)
 - `src/explain.js` — optional "Explain availability" mock adapter: buildExplainInput, validateExplainInput, SYSTEM_PROMPT, mockLlm, validateExplanation, explainAvailability; never calls a real API and never mutates bookings
 - `src/main.js` — UI logic (form, messages) + explain button wiring
