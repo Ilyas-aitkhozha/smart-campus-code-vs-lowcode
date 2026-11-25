@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Campus — Room availability</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <h1>Smart Campus</h1>
+        <p class="subtitle">Check if a room is free before you choose a booking time.</p>
+      </header>
+
+      <section class="card" aria-labelledby="room-title">
+        <h2 id="room-title">Room <span id="room-id"></span></h2>
+        <p class="meta">Current time (fixed for the demo): <strong id="now-label"></strong></p>
+        <h3>Existing bookings</h3>
+        <ul id="booking-list" class="booking-list"></ul>
+      </section>
+
+      <section class="card" aria-labelledby="form-title">
+        <h2 id="form-title">Check a time slot</h2>
+        <form id="check-form" novalidate>
+          <div class="row">
+            <label>Start time
+              <input id="start" type="time" step="300" required />
+            </label>
+            <label>End time
+              <input id="end" type="time" step="300" required />
+            </label>
+          </div>
+          <label class="checkbox">
+            <input id="blocked" type="checkbox" />
+            Room is blocked (maintenance)
+          </label>
+          <button type="submit">Check availability</button>
+        </form>
+        <div id="result" class="result" role="status" aria-live="polite" hidden></div>
+
+        <div id="explain-section" hidden>
+          <label class="mock-mode-label" for="mock-mode">Mock mode
+            <select id="mock-mode">
+              <option value="normal">normal</option>
+              <option value="timeout">timeout</option>
+              <option value="error">API error</option>
+              <option value="nokey">no key</option>
+              <option value="invalid">invalid output</option>
+            </select>
+          </label>
+          <button id="explain-btn" type="button">Explain availability</button>
+          <div id="explanation" class="explanation" role="status" aria-live="polite" hidden></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

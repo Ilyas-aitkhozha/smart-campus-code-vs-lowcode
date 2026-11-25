@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 C:/Users/emila/AppData/Local/Temp/claude/30049ef236d1cc84/d29198c9-5ed9-43a5-87a1-5f3fbe829b8f/scratchpad/bolt/project
+
+ ✓ tests/invalid-input.test.js (5 tests) 3ms
+ ✓ tests/availability.test.js (10 tests) 3ms
+ ✓ tests/regression.test.js (15 tests) 4ms
+ ✓ tests/explain.test.js (28 tests) 61ms
+
+ Test Files  4 passed (4)
+      Tests  58 passed (58)
+   Start at  19:12:25
+   Duration  490ms (transform 93ms, setup 0ms, collect 181ms, tests 71ms, environment 1ms, prepare 522ms)
+

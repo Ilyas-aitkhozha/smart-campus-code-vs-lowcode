@@ -1,0 +1,114 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f3f5f9;
+  color: #1c2433;
+  line-height: 1.5;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.header h1 { margin: 0; font-size: 1.8rem; }
+.subtitle { margin: 4px 0 20px; color: #4a5568; }
+
+.card {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.card h2 { margin: 0 0 8px; font-size: 1.25rem; }
+.card h3 { margin: 16px 0 6px; font-size: 1rem; }
+.meta { margin: 0; color: #4a5568; }
+
+.booking-list { margin: 0; padding-left: 20px; }
+
+.row { display: flex; gap: 12px; }
+.row label { flex: 1; }
+
+label { display: block; font-weight: 600; margin-bottom: 12px; }
+
+input[type="time"] {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #b8c2d1;
+  border-radius: 8px;
+}
+
+.checkbox { display: flex; align-items: center; gap: 8px; font-weight: 400; }
+
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #2457d6;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover { background: #1c46ad; }
+
+.result {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.result.ok { background: #e6f6ec; color: #17643a; border: 1px solid #9fd8b4; }
+.result.error { background: #fdecec; color: #9b1c1c; border: 1px solid #f1a9a9; }
+
+#explain-section { margin-top: 16px; }
+
+.mock-mode-label {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mock-mode-label select {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.95rem;
+  border: 1px solid #b8c2d1;
+  border-radius: 8px;
+  background: #fff;
+  color: #1c2433;
+}
+
+#explain-btn {
+  background: #2c6e49;
+}
+#explain-btn:hover { background: #2457d6; }
+#explain-btn:disabled { background: #9aa6b8; cursor: not-allowed; }
+
+.explanation {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #f4f6fb;
+  color: #313a4d;
+  border: 1px solid #dde3ec;
+  font-weight: 400;
+}
+
+@media (max-width: 480px) {
+  .row { flex-direction: column; gap: 0; }
+  .header h1 { font-size: 1.5rem; }
+}
