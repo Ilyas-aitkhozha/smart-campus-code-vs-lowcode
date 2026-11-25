@@ -1,0 +1,15 @@
+# Node pre-check of the Appsmith JS Object logic (outside Appsmith; widgets stubbed out)
+# 2026-11-24T19:17:29+05:00  node v24.13.1  command: node sc-test.mjs
+T1 OK PASS
+T2 OVERLAP PASS
+T3 ROOM_BLOCKED PASS
+T4 DURATION_TOO_SHORT PASS
+T5 DURATION_TOO_LONG PASS
+T6 IN_THE_PAST PASS
+T7 OK PASS
+X1 INVALID_START_TIME PASS
+X2 INVALID_DURATION PASS
+X3 OK PASS
+X4 OK PASS
+T8 bookings unchanged: true
+11/11
