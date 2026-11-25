@@ -19,19 +19,19 @@ So the difference measures "reuse existing code + AI" vs. "learn a new platform"
 ## Comparison matrix
 | Criterion | Code-based | Low-code (Appsmith) |
 |---|---|---|
-| Functional tests | **8 / 8** (automated + manual) | **8 / 8** (manual only; T6 typed 08:30 instead of 08:00) |
+| Functional tests | **8 / 8** (automated + manual) | **8 / 8** (manual: preview + deployed re-run) |
 | Build and repair time | **~6 min** | **~30 min** |
-| Unresolved defects | 0 functional; stale result after clearing inputs (UX) | 0 functional; stale result after clearing inputs (UX); title missing `)` (cosmetic) |
+| Unresolved defects | 0 functional; stale result after clearing inputs (UX) | 0 functional; **mobile layout broken at 375 px** (AC6 partial); stale result (UX); title missing `)` (cosmetic) |
 | Customization | Full control of UI, messages, colours and breakpoints; any rule can be expressed and unit-tested | Fast visual layout, but non-trivial logic (overlap, validation order) still needed a JS Object. Widget-level validation shows its own tooltip, so it was not used, to keep one shared message set |
 | Security controls | Validation in code, `textContent` only, 15 automated invalid-input tests, `npm audit` (SCA) | Same validation in a JS Object; platform renders text; table **Download** button left enabled; platform runtime not auditable by us |
-| Versioning / portability | Plain files in Git, line-level diffs, runs anywhere with Node; `vite build` gives static files | App lives on Appsmith Cloud; "Connect Git" exists in the editor but was **not** used; app JSON export **not** done; logic is copied in `low-code/appsmith/SlotChecker.jsobject.js` |
+| Versioning / portability | Plain files in Git, line-level diffs, runs anywhere with Node; `vite build` gives static files | App lives on Appsmith Cloud. A JSON export (one large file with layout coordinates) is in Git, but it only re-imports into Appsmith. "Connect Git" exists but was not used |
 | Ongoing cost | Free (static hosting / Bolt publish) | Cloud sign-up showed only paid plans (Business $15/user/month, Enterprise). Used a **15-day free trial, no card**. The app may stop working after the trial |
 
 ## Review, export and version control
 | | Code-based | Low-code |
 |---|---|---|
 | Review | Line-by-line Git diff; tests run before acceptance | Visual inspection of each widget; no diff of widget changes was used |
-| Export | Source files + `npm run build` | Platform JSON export (not done); the script file is kept in Git by hand |
+| Export | Source files + `npm run build` | Platform JSON export (`export/smart-campus-lowcode.json`) + the script file kept by hand |
 | Version control | Git history in this repository | Not connected (Git connect available but not set up) |
 
 ## Measured vs. impressions
@@ -40,5 +40,5 @@ So the difference measures "reuse existing code + AI" vs. "learn a new platform"
 
 ## Recommendation
 For this feature, choose **code-based** as the primary solution. It is 8/8 with automated regression tests, it is versioned in Git with real diffs, it costs nothing, and it is portable.
-Appsmith also reached 8/8, but only by placing the core rules in a JavaScript object anyway, so low-code saved layout work, not logic work. It also adds a trial-based cost risk and weaker version control unless Git sync is set up.
+Appsmith also reached 8/8, but only by placing the core rules in a JavaScript object anyway, so low-code saved layout work, not logic work. Even that layout broke on mobile. It also adds a trial-based cost risk and weaker version control unless Git sync is set up.
 Low-code is reasonable for a quick internal prototype or admin screen, provided Git sync is connected and plan costs are approved.

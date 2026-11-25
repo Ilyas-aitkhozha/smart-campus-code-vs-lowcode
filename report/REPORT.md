@@ -7,10 +7,10 @@ date: "25 November 2026"
 
 **Repository:** https://github.com/Ilyas-aitkhozha/smart-campus-code-vs-lowcode  
 **Code-based live demo (baseline):** https://smart-campus-11-1q5d.bolt.host  
-**Low-code:** Appsmith Cloud app *smart campus-lowcode* (editor preview; not deployed, see Limitations)
+**Low-code (public, Appsmith):** https://ilyas-smart-campus.appsmith.com/app/smart-campus-lowcode/page1-6b06ebfd92ce383e8540cbc4
 
 ## Summary
-The same feature, "is room R-101 free for this start time and duration?", was built twice: in code (the existing Bolt.new JavaScript project) and in Appsmith (low-code). Both were run against one shared contract and eight identical tests. Both passed **8/8**. The code-based version took about 6 minutes, AI-assisted, because it reused the existing engine. The Appsmith version took about 30 minutes by hand and still needed a JavaScript object for the rules. **Recommendation: code-based**, for testability, Git versioning, portability and zero cost.
+The same feature, "is room R-101 free for this start time and duration?", was built twice: in code (the existing Bolt.new JavaScript project) and in Appsmith (low-code). Both were run against one shared contract and eight identical tests. Both passed **8/8**, and Appsmith passed again after it was deployed. The code-based version took about 6 minutes, AI-assisted, because it reused the existing engine. The Appsmith version took about 30 minutes by hand, still needed a JavaScript object for the rules, and its fixed layout breaks at phone width. **Recommendation: code-based**, for testability, Git versioning, portability, responsive UI and zero cost.
 
 ## Task 01 — Frozen baseline
 
@@ -246,33 +246,58 @@ Fixed now: 2026-10-28 09:00. Bookings: B1 10:00–11:00, B2 14:00–15:00.
 | T8 | after T1–T7 | bookings unchanged | ✅ `toEqual(snapshot)` + UI list unchanged | ✅ the table shows B1 10:00–11:00 and B2 14:00–15:00 in every screenshot T1–T7 |
 | **Total** | | | **8 / 8** | **8 / 8** |
 
+## Re-run on the deployed, public Appsmith app
+After Deploy, all cases were repeated on the **published URL** without signing in:
+https://ilyas-smart-campus.appsmith.com/app/smart-campus-lowcode/page1-6b06ebfd92ce383e8540cbc4?environment=production
+(2026-11-25 ≈19:44; the AI assistant ran them in its browser; screenshots in `screenshots/low-code/deployed/`).
+
+| Test | Input | Observed on the deployed app |
+|---|---|---|
+| T1 | 12:00, 60, off | ✅ Available `OK` |
+| T2 | 10:30, 60, off | ✅ `OVERLAP` |
+| T3 | 12:00, 60, on | ✅ `ROOM_BLOCKED` |
+| T4 | 12:00, 0 | ✅ `DURATION_TOO_SHORT` |
+| T5 | 12:00, 121 | ✅ `DURATION_TOO_LONG` |
+| T6 | **08:00**, 30 (exact shared input) | ✅ `IN_THE_PAST` |
+| T7 | 11:00, 60 | ✅ Available `OK` |
+| T8 | — | ✅ the table shows B1 and B2 unchanged in every screenshot |
+| **Total** | | **8 / 8** |
+
 ## Extra runtime checks (DAST perspective)
 | Check | Code-based | Low-code |
 |---|---|---|
-| HTML/script-like start time | `<script>alert(1)</script>` → `INVALID_START_TIME`, not echoed (automated test) | `<.b` → "Enter a valid start time (HH:MM)." `INVALID_START_TIME`, nothing rendered as HTML (`X1-html-like-input-1931.png`), see note 2 |
-| Mobile width | ✅ 375 px, no horizontal scroll (`mobile-375px.jpg`) | ⚠️ **not checked**: no mobile screenshot was taken |
+| HTML/script-like start time | `<script>alert(1)</script>` → `INVALID_START_TIME`, not echoed (automated test) | Preview: `<.b` → `INVALID_START_TIME` (`X1-html-like-input-1931.png`). Deployed: `<img src=x onerror=alert(1)>` → `INVALID_START_TIME`, no alert, and the DOM check found 0 injected `<img src="x">` elements (`deployed/D-X2-img-onerror-payload.jpg`) |
+| Mobile width | ✅ 375 px, no horizontal scroll (`mobile-375px.jpg`) | ❌ **defect** at 375 px: no horizontal scroll, but labels are truncated ("Star…", "Duration …"), the switch label wraps letter by letter, and the button overlaps it. The app uses the fixed layout (`appPositioning: FIXED` in the export) (`deployed/D-mobile-375px-broken-layout.jpg`) |
 
 ## Notes
-1. **T6 input deviation (low-code).** The shared input was 08:00; 08:30 was typed. Both values lie before the fixed now (09:00) and hit the same rule branch (`s <= now`), so the result is comparable. Even so, the low-code T6 input did not match the sheet exactly.
-2. **Partial XSS input (low-code).** The planned payload was `<b>x</b>`, but `<.b` was typed. It still shows that an HTML-like string is rejected by validation and never echoed. A full `<img src=x onerror=…>` payload was **not** tried in Appsmith.
+1. **T6 input deviation (preview run).** The author typed 08:30 instead of 08:00. The deployed re-run used the exact 08:00 and passed.
+2. **XSS input.** The preview run used a partial string `<.b`. The full `<img src=x onerror=alert(1)>` payload was tested on the deployed app and was rejected.
 3. **Observation in both apps.** When the inputs are cleared, the previous result stays visible until the button is pressed again (`X0-stale-result-after-clearing-1931.png`). This is not a T1–T8 failure. It is a UX weakness and is listed in the limitations.
-4. Low-code tests ran in the **editor preview**, not in a deployed app.
+4. Low-code tests ran twice: in the editor preview (by the author) and on the deployed public app (see above).
 
-![Figure 16. Low-code T1 → Available (OK)](../screenshots/low-code/T1-available-1929.png){width=15cm}
+![Figure 16. Low-code preview T1 → Available (OK)](../screenshots/low-code/T1-available-1929.png){width=15cm}
 
-![Figure 17. Low-code T2 → OVERLAP](../screenshots/low-code/T2-overlap-1929.png){width=15cm}
+![Figure 17. Low-code preview T2 → OVERLAP](../screenshots/low-code/T2-overlap-1929.png){width=15cm}
 
-![Figure 18. Low-code T3 → ROOM_BLOCKED](../screenshots/low-code/T3-blocked-1929.png){width=15cm}
+![Figure 18. Low-code preview T3 → ROOM_BLOCKED](../screenshots/low-code/T3-blocked-1929.png){width=15cm}
 
-![Figure 19. Low-code T4 → DURATION_TOO_SHORT](../screenshots/low-code/T4-duration-0-1930.png){width=15cm}
+![Figure 19. Low-code preview T4 → DURATION_TOO_SHORT](../screenshots/low-code/T4-duration-0-1930.png){width=15cm}
 
-![Figure 20. Low-code T5 → DURATION_TOO_LONG](../screenshots/low-code/T5-duration-121-1930.png){width=15cm}
+![Figure 20. Low-code preview T5 → DURATION_TOO_LONG](../screenshots/low-code/T5-duration-121-1930.png){width=15cm}
 
-![Figure 21. Low-code T6 (08:30) → IN_THE_PAST](../screenshots/low-code/T6-past-start-1930.png){width=15cm}
+![Figure 21. Low-code preview T6 (08:30) → IN_THE_PAST](../screenshots/low-code/T6-past-start-1930.png){width=15cm}
 
-![Figure 22. Low-code T7 → Available; bookings unchanged (T8)](../screenshots/low-code/T7-adjacent-1931.png){width=15cm}
+![Figure 22. Low-code preview T7 → Available; bookings unchanged (T8)](../screenshots/low-code/T7-adjacent-1931.png){width=15cm}
 
-![Figure 23. Low-code HTML-like input → INVALID_START_TIME](../screenshots/low-code/X1-html-like-input-1931.png){width=15cm}
+![Figure 23. Deployed public app T1 → Available (OK)](../screenshots/low-code/deployed/D-T1-available.jpg){width=15cm}
+
+![Figure 24. Deployed public app T3 → ROOM_BLOCKED](../screenshots/low-code/deployed/D-T3-blocked.jpg){width=15cm}
+
+![Figure 25. Deployed public app T6 with exact 08:00 → IN_THE_PAST](../screenshots/low-code/deployed/D-T6-past-0800.jpg){width=15cm}
+
+![Figure 26. Deployed app: <img src=x onerror=alert(1)> rejected as INVALID_START_TIME](../screenshots/low-code/deployed/D-X2-img-onerror-payload.jpg){width=15cm}
+
+![Figure 27. Defect: deployed Appsmith app at 375 px (fixed layout breaks)](../screenshots/low-code/deployed/D-mobile-375px-broken-layout.jpg){width=15cm}
 
 ## Task 06 — Engineering effort and comparison matrix
 
@@ -295,19 +320,19 @@ So the difference measures "reuse existing code + AI" vs. "learn a new platform"
 ## Comparison matrix
 | Criterion | Code-based | Low-code (Appsmith) |
 |---|---|---|
-| Functional tests | **8 / 8** (automated + manual) | **8 / 8** (manual only; T6 typed 08:30 instead of 08:00) |
+| Functional tests | **8 / 8** (automated + manual) | **8 / 8** (manual: preview + deployed re-run) |
 | Build and repair time | **~6 min** | **~30 min** |
-| Unresolved defects | 0 functional; stale result after clearing inputs (UX) | 0 functional; stale result after clearing inputs (UX); title missing `)` (cosmetic) |
+| Unresolved defects | 0 functional; stale result after clearing inputs (UX) | 0 functional; **mobile layout broken at 375 px** (AC6 partial); stale result (UX); title missing `)` (cosmetic) |
 | Customization | Full control of UI, messages, colours and breakpoints; any rule can be expressed and unit-tested | Fast visual layout, but non-trivial logic (overlap, validation order) still needed a JS Object. Widget-level validation shows its own tooltip, so it was not used, to keep one shared message set |
 | Security controls | Validation in code, `textContent` only, 15 automated invalid-input tests, `npm audit` (SCA) | Same validation in a JS Object; platform renders text; table **Download** button left enabled; platform runtime not auditable by us |
-| Versioning / portability | Plain files in Git, line-level diffs, runs anywhere with Node; `vite build` gives static files | App lives on Appsmith Cloud; "Connect Git" exists in the editor but was **not** used; app JSON export **not** done; logic is copied in `low-code/appsmith/SlotChecker.jsobject.js` |
+| Versioning / portability | Plain files in Git, line-level diffs, runs anywhere with Node; `vite build` gives static files | App lives on Appsmith Cloud. A JSON export (one large file with layout coordinates) is in Git, but it only re-imports into Appsmith. "Connect Git" exists but was not used |
 | Ongoing cost | Free (static hosting / Bolt publish) | Cloud sign-up showed only paid plans (Business $15/user/month, Enterprise). Used a **15-day free trial, no card**. The app may stop working after the trial |
 
 ## Review, export and version control
 | | Code-based | Low-code |
 |---|---|---|
 | Review | Line-by-line Git diff; tests run before acceptance | Visual inspection of each widget; no diff of widget changes was used |
-| Export | Source files + `npm run build` | Platform JSON export (not done); the script file is kept in Git by hand |
+| Export | Source files + `npm run build` | Platform JSON export (`export/smart-campus-lowcode.json`) + the script file kept by hand |
 | Version control | Git history in this repository | Not connected (Git connect available but not set up) |
 
 ## Measured vs. impressions
@@ -316,7 +341,7 @@ So the difference measures "reuse existing code + AI" vs. "learn a new platform"
 
 ## Recommendation
 For this feature, choose **code-based** as the primary solution. It is 8/8 with automated regression tests, it is versioned in Git with real diffs, it costs nothing, and it is portable.
-Appsmith also reached 8/8, but only by placing the core rules in a JavaScript object anyway, so low-code saved layout work, not logic work. It also adds a trial-based cost risk and weaker version control unless Git sync is set up.
+Appsmith also reached 8/8, but only by placing the core rules in a JavaScript object anyway, so low-code saved layout work, not logic work. Even that layout broke on mobile. It also adds a trial-based cost risk and weaker version control unless Git sync is set up.
 Low-code is reasonable for a quick internal prototype or admin screen, provided Git sync is connected and plan costs are approved.
 
 ## Task 07 — Security review (Lecture #12)
@@ -326,12 +351,12 @@ Scope: only our own two apps. No third-party service was scanned. All runtime ch
 | # | Check | Code-based | Low-code (Appsmith) |
 |---|---|---|---|
 | 1 | **Input validation (SQL/command injection)** | No database or queries. A strict regex `^([01]\d\|2[0-3]):[0-5]\d$` and an integer check 1–120 run before use | No datasource or queries. The same regex and integer check run in the JS Object `SlotChecker` |
-| 2 | **Output handling (XSS)** | Results rendered with `textContent`, never `innerHTML`. Messages come from a fixed map and never echo input. `<script>alert(1)</script>` → `INVALID_START_TIME` (automated test) | Messages come from a fixed map and never echo input. `<.b` → `INVALID_START_TIME`, nothing rendered as HTML. A full `<img onerror>` payload was not tried |
-| 3 | **Permissions / public sharing** | Static, read-only site; no admin or edit surface | Editor access only for the owner account; no other users invited. The app was **not** made public and not deployed |
-| 4 | **Secrets** | `grep` for key/token/secret/password in `code-based/src`, `index.html`, `package.json`: nothing found. The explain feature is a mock with no API key | No API keys, connectors or datasources were created, so no secrets are stored in the app |
+| 2 | **Output handling (XSS)** | Results rendered with `textContent`, never `innerHTML`. Messages come from a fixed map and never echo input. `<script>alert(1)</script>` → `INVALID_START_TIME` (automated test) | Messages come from a fixed map and never echo input. Deployed app: `<img src=x onerror=alert(1)>` → `INVALID_START_TIME`, no alert, 0 injected `<img>` in the DOM |
+| 3 | **Permissions / public sharing** | Static, read-only site; no admin or edit surface | Deployed with **public view** (`isPublic: true`); viewers can only use the form. Editor access only for the owner; no other users invited |
+| 4 | **Secrets** | `grep` for key/token/secret/password in `code-based/src`, `index.html`, `package.json`: nothing found. The explain feature is a mock with no API key | No API keys, connectors or datasources. The export JSON was scanned: no e-mail addresses, tokens or passwords; `datasourceList: []` |
 | 5 | **Connectors / data sources** | None | None. Bookings are a constant list in the JS Object |
 | 6 | **Personal data** | None; fictional room and bookings only | None in the app. Appsmith names the workspace after the account e-mail, and screenshots also showed personal browser tabs. Both areas were blacked out in the published screenshots (sensitive-data exposure, Lecture #12) |
-| 7 | **Data exposure** | Bookings are visible by design (fictional) | The table **Download** button is enabled, so any viewer could export the table. Harmless with fictional data; it should be turned off for real data |
+| 7 | **Data exposure** | Bookings are visible by design (fictional) | The table **Download** button is enabled (`isVisibleDownload: true` in the export), and the app is public, so any visitor could export the table. Harmless with fictional data; it should be turned off for real data |
 | 8 | **SCA (dependencies)** | `npm audit`: 3 findings (1 moderate, 2 critical) in **dev-only** `vitest@3.2.7` → `@vitest/mocker`, `tinypool`. They are not in the shipped `dist/` bundle. The fix is an upgrade to vitest 5 (breaking change), recorded as an action. See `evidence/07-npm-audit.txt` | Platform-managed: Appsmith patches its runtime and widgets. We cannot see, audit or pin these components. The responsibility moves to the vendor; we only control the app config and the JS Object |
 | 9 | **SAST (code review)** | Manual review of `validation.js`, `slotChecker.js`, `main.js`: no `eval`, no `innerHTML` (grep verified) | Manual review of the JS Object: no `eval`, no network calls, a read-only loop over the bookings. Widget internals cannot be reviewed |
 | 10 | **DAST (running app)** | Browser runs: `0`, `121`, past time (screenshots T4–T6). Automated: empty start, `abc`, `30.5`, empty duration, script-like text. Every case gave a clear message, no crash, no false Available | Preview runs T4–T6 and the HTML-like input: every case gave a clear message, no crash, no false Available |
@@ -353,21 +378,21 @@ Scope: only our own two apps. No third-party service was scanned. All runtime ch
 
 **What was wrong or risky.** The first test run inside the repository folder failed on a long Windows path, and `npx` silently downloaded a different Vitest version (5.1.1 instead of the pinned 3.2.7). The green result looked fine but was not valid evidence, so the run was repeated with `--no-install` in a short folder. The assistant also once listed a DAST input (`-5`) that had never been run; it was removed. `npm audit` reported "critical" findings, but they sit in a dev-only test dependency, so the severity was judged by context, not copied from the tool. In Appsmith, the guide did not say clearly enough that bindings need the **JS** toggle: I typed the table binding into a search box and lost a few minutes.
 
-**What I kept under my control.** The AI had no permission to commit or push. Commits were made only after my approval and under my name. I built and tested the Appsmith app myself, and personal data (e-mail in the workspace name, browser tabs) was blacked out before the screenshots were published.
+**What I kept under my control.** The AI had no permission to commit or push. Commits were made only after my approval and under my name. I built and tested the Appsmith app myself in preview. After I deployed it, the assistant re-ran T1–T8, a full `<img onerror>` payload and a 375 px check on the public URL. That run found a real defect I had missed: the fixed layout breaks on mobile. Personal data (e-mail in the workspace name, browser tabs) was blacked out before the screenshots were published.
 
-**What I would improve.** Pin tool versions in scripts, upgrade vitest in a separate reviewed change, connect Appsmith to Git and export the app, and clear the old result whenever an input changes.
+**What I would improve.** Pin tool versions in scripts, upgrade vitest in a separate reviewed change, connect Appsmith to Git, switch the Appsmith page to the responsive (auto) layout, and clear the old result whenever an input changes.
 
 ## Remaining limitations (incomplete or simulated behaviour)
 
-Everything below was **not** done or is only partly done. Nothing in this list was simulated as passing.
+Status of every gap found during the work. DONE/RESOLVED rows were closed after the first submission draft and are kept for traceability. Nothing in this list was simulated as passing.
 
 | # | Item | Track | Status |
 |---|---|---|---|
-| 1 | Appsmith app **not deployed and not shared publicly**; tests ran in the editor preview | low-code | NOT DONE |
-| 2 | Appsmith app **JSON export not done**; the only copy of the logic in Git is `low-code/appsmith/SlotChecker.jsobject.js` (the exact script pasted into the app) | low-code | NOT DONE |
-| 3 | Appsmith **mobile layout not checked** (no screenshot) | low-code | NOT DONE |
-| 4 | Low-code **T6 used 08:30** instead of the shared 08:00 (same rule branch, see `05-test-results.md`) | low-code | DEVIATION |
-| 5 | Low-code XSS probe was a partial string `<.b`; a full `<img onerror>` payload was not tried | low-code | PARTIAL |
+| 1 | Appsmith app deployed and public; T1–T8 re-run on the published URL: 8/8 | low-code | DONE |
+| 2 | JSON export in `low-code/appsmith/export/smart-campus-lowcode.json` (checked: no e-mails, tokens or datasources). It was taken **before** Deploy, so its `publishedPage` is empty; the editor page with all 7 widgets is complete | low-code | DONE |
+| 3 | Appsmith **mobile layout broken** at 375 px (truncated labels, overlapping button) because of the fixed layout. AC6 is only partly met on mobile | low-code | OPEN DEFECT |
+| 4 | Preview T6 used 08:30; the deployed re-run used the exact 08:00 | low-code | RESOLVED |
+| 5 | The full `<img src=x onerror=alert(1)>` payload was tested on the deployed app and rejected | low-code | DONE |
 | 6 | Appsmith runs on a **15-day trial** (Business plan, no card); the app may stop after the trial | low-code | RISK |
 | 7 | Bolt.new live demo `smart-campus-11-1q5d.bolt.host` still shows the **baseline** (start + end time). The duration version exists only in `code-based/` | code-based | NOT REPUBLISHED |
 | 8 | `npm audit` findings in dev-only vitest 3.2.7 not fixed (needs a breaking upgrade) | code-based | OPEN |

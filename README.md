@@ -8,10 +8,10 @@ The same small feature, a room-availability check for one fictional campus room,
 | Track | Where | Live |
 |---|---|---|
 | Code-based | `code-based/` (Vite + JavaScript, from the Bolt.new project) | Bolt.new: https://smart-campus-11-1q5d.bolt.host (baseline version; the duration version is in `code-based/`, see limitations) |
-| Low-code | Appsmith Cloud (15-day trial), guide and script in `low-code/appsmith/` | not deployed (tested in editor preview, see limitations) |
+| Low-code | Appsmith Cloud (15-day trial), guide, script and JSON export in `low-code/appsmith/` | https://ilyas-smart-campus.appsmith.com/app/smart-campus-lowcode/page1-6b06ebfd92ce383e8540cbc4 (public; trial may expire) |
 
 ## Result in one line
-Both apps pass **8/8** shared tests. Code-based: ~6 min (reused engine + AI), Git-versioned, free. Appsmith: ~30 min by hand, logic still needed a JS Object, trial-based hosting. **Recommendation: code-based.**
+Both apps pass **8/8** shared tests. Code-based: ~6 min (reused engine + AI), Git-versioned, free. Appsmith: ~30 min by hand, logic still needed a JS Object, mobile layout broken, trial-based hosting. **Recommendation: code-based.**
 
 ## Contents
 | Task | Document | Evidence |

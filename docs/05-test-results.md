@@ -16,14 +16,31 @@ Fixed now: 2026-10-28 09:00. Bookings: B1 10:00–11:00, B2 14:00–15:00.
 | T8 | after T1–T7 | bookings unchanged | ✅ `toEqual(snapshot)` + UI list unchanged | ✅ the table shows B1 10:00–11:00 and B2 14:00–15:00 in every screenshot T1–T7 |
 | **Total** | | | **8 / 8** | **8 / 8** |
 
+## Re-run on the deployed, public Appsmith app
+After Deploy, all cases were repeated on the **published URL** without signing in:
+https://ilyas-smart-campus.appsmith.com/app/smart-campus-lowcode/page1-6b06ebfd92ce383e8540cbc4?environment=production
+(2026-11-25 ≈19:44; the AI assistant ran them in its browser; screenshots in `screenshots/low-code/deployed/`).
+
+| Test | Input | Observed on the deployed app |
+|---|---|---|
+| T1 | 12:00, 60, off | ✅ Available `OK` |
+| T2 | 10:30, 60, off | ✅ `OVERLAP` |
+| T3 | 12:00, 60, on | ✅ `ROOM_BLOCKED` |
+| T4 | 12:00, 0 | ✅ `DURATION_TOO_SHORT` |
+| T5 | 12:00, 121 | ✅ `DURATION_TOO_LONG` |
+| T6 | **08:00**, 30 (exact shared input) | ✅ `IN_THE_PAST` |
+| T7 | 11:00, 60 | ✅ Available `OK` |
+| T8 | — | ✅ the table shows B1 and B2 unchanged in every screenshot |
+| **Total** | | **8 / 8** |
+
 ## Extra runtime checks (DAST perspective)
 | Check | Code-based | Low-code |
 |---|---|---|
-| HTML/script-like start time | `<script>alert(1)</script>` → `INVALID_START_TIME`, not echoed (automated test) | `<.b` → "Enter a valid start time (HH:MM)." `INVALID_START_TIME`, nothing rendered as HTML (`X1-html-like-input-1931.png`), see note 2 |
-| Mobile width | ✅ 375 px, no horizontal scroll (`mobile-375px.jpg`) | ⚠️ **not checked**: no mobile screenshot was taken |
+| HTML/script-like start time | `<script>alert(1)</script>` → `INVALID_START_TIME`, not echoed (automated test) | Preview: `<.b` → `INVALID_START_TIME` (`X1-html-like-input-1931.png`). Deployed: `<img src=x onerror=alert(1)>` → `INVALID_START_TIME`, no alert, and the DOM check found 0 injected `<img src="x">` elements (`deployed/D-X2-img-onerror-payload.jpg`) |
+| Mobile width | ✅ 375 px, no horizontal scroll (`mobile-375px.jpg`) | ❌ **defect** at 375 px: no horizontal scroll, but labels are truncated ("Star…", "Duration …"), the switch label wraps letter by letter, and the button overlaps it. The app uses the fixed layout (`appPositioning: FIXED` in the export) (`deployed/D-mobile-375px-broken-layout.jpg`) |
 
 ## Notes
-1. **T6 input deviation (low-code).** The shared input was 08:00; 08:30 was typed. Both values lie before the fixed now (09:00) and hit the same rule branch (`s <= now`), so the result is comparable. Even so, the low-code T6 input did not match the sheet exactly.
-2. **Partial XSS input (low-code).** The planned payload was `<b>x</b>`, but `<.b` was typed. It still shows that an HTML-like string is rejected by validation and never echoed. A full `<img src=x onerror=…>` payload was **not** tried in Appsmith.
+1. **T6 input deviation (preview run).** The author typed 08:30 instead of 08:00. The deployed re-run used the exact 08:00 and passed.
+2. **XSS input.** The preview run used a partial string `<.b`. The full `<img src=x onerror=alert(1)>` payload was tested on the deployed app and was rejected.
 3. **Observation in both apps.** When the inputs are cleared, the previous result stays visible until the button is pressed again (`X0-stale-result-after-clearing-1931.png`). This is not a T1–T8 failure. It is a UX weakness and is listed in the limitations.
-4. Low-code tests ran in the **editor preview**, not in a deployed app.
+4. Low-code tests ran twice: in the editor preview (by the author) and on the deployed public app (see above).
